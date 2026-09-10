@@ -8,6 +8,7 @@
 <html>
 <head>
     <title>Vuelo App - Inicio</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
 </head>
 <body>
 <h1>Bienvenido al Sistema de Gestion de Vuelos</h1>

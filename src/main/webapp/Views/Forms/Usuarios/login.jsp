@@ -7,6 +7,7 @@
 <html>
 <head>
     <title>Iniciar Sesion</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
 </head>
 <body>
 <h1>Iniciar Sesion</h1>

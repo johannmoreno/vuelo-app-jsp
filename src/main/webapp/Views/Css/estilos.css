@@ -1,0 +1,215 @@
+/* ===== Variables y reset base ===== */
+:root {
+    --color-primario: #1a73e8;
+    --color-primario-oscuro: #0d47a1;
+    --color-exito: #1e8e3e;
+    --color-error: #d93025;
+    --color-fondo: #f5f7fa;
+    --color-tarjeta: #ffffff;
+    --color-borde: #dfe3e8;
+    --color-texto: #202124;
+    --color-texto-suave: #5f6368;
+    --radio: 8px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Contenedor general ===== */
+body > *:not(script) {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    background-color: var(--color-primario);
+    color: white;
+    padding: 20px 24px;
+    margin: 0 0 24px 0;
+    max-width: none;
+}
+
+h1, h2, h3 {
+    font-weight: 600;
+}
+
+h2, h3 {
+    padding: 0 24px;
+}
+
+/* ===== Mensajes de exito / error ===== */
+p[style*="color:red"] {
+    background-color: #fce8e6;
+    color: var(--color-error) !important;
+    border: 1px solid #f6aea9;
+    border-radius: var(--radio);
+    padding: 12px 16px;
+    margin: 0 24px 20px 24px;
+    font-weight: 500;
+}
+
+p[style*="color:green"] {
+    background-color: #e6f4ea;
+    color: var(--color-exito) !important;
+    border: 1px solid #a8dab5;
+    border-radius: var(--radio);
+    padding: 12px 16px;
+    margin: 0 24px 20px 24px;
+    font-weight: 500;
+}
+
+/* ===== Formularios ===== */
+form {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    padding: 24px;
+    margin: 0 24px 24px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-texto-suave);
+    margin-bottom: 4px;
+    margin-top: 12px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    font-size: 14px;
+    background-color: white;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.15);
+}
+
+/* ===== Botones ===== */
+input[type="submit"],
+button {
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radio);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 16px;
+    margin-right: 8px;
+    transition: background-color 0.15s ease;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background-color: var(--color-primario-oscuro);
+}
+
+button:disabled {
+    background-color: #b0b8c1;
+    cursor: not-allowed;
+}
+
+/* Boton de eliminar en rojo (cuando dice "Eliminar") */
+button[onclick*="delete"] {
+    background-color: var(--color-error);
+}
+
+button[onclick*="delete"]:hover {
+    background-color: #a50e0e;
+}
+
+/* ===== Tablas ===== */
+table {
+    width: calc(100% - 48px);
+    margin: 0 24px 24px 24px;
+    border-collapse: collapse;
+    background-color: var(--color-tarjeta);
+    border-radius: var(--radio);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+thead {
+    background-color: var(--color-primario);
+}
+
+thead th {
+    color: white;
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+tbody td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--color-borde);
+    font-size: 14px;
+}
+
+tbody tr:hover {
+    background-color: #f5f7fa;
+}
+
+/* ===== Enlaces ===== */
+a {
+    color: var(--color-primario);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Enlaces sueltos (menu, "volver") como bloques con padding */
+body > a, body > br + a {
+    display: inline-block;
+    margin: 0 24px 24px 24px;
+}
+
+/* ===== Listas del menu principal (index.jsp) ===== */
+ul {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    margin: 0 24px 24px 24px;
+    padding: 16px 16px 16px 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+ul li {
+    padding: 6px 0;
+}
+
+/* ===== Separadores ===== */
+hr {
+    border: none;
+    border-top: 1px solid var(--color-borde);
+    margin: 24px;
+}

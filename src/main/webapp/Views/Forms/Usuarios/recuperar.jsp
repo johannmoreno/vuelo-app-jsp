@@ -7,6 +7,7 @@
 <html>
 <head>
     <title>Recuperar Clave</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
 </head>
 <body>
 <h1>Recuperar Clave</h1>

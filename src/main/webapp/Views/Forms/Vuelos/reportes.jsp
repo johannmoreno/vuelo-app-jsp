@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>Reportes de Vuelos</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
 </head>
 <body>
 <h1>Reportes Parametrizados de Vuelos</h1>

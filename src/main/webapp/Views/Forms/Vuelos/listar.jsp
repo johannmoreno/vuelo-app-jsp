@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>Lista de Vuelos</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
 </head>
 <body>
 <h1>Lista de Todos los Vuelos</h1>

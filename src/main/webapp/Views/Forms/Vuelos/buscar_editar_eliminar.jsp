@@ -8,6 +8,7 @@
 <html>
 <head>
     <title>Buscar, Editar o Eliminar Vuelo</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
     <script>
         function enableButtons() {
             document.getElementById("editBtn").disabled = false;

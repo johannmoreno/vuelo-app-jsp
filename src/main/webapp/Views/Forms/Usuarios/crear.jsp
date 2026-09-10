@@ -7,6 +7,7 @@
 <html>
 <head>
     <title>Agregar Usuario</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Views/Css/estilos.css">
 </head>
 <body>
 <h1>Agregar Usuario</h1>
