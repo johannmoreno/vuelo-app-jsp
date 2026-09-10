@@ -1,6 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="java.io.IOException" %>
+<%@ page import="jakarta.mail.MessagingException" %>
 <%@ page import="jakarta.servlet.ServletException" %>
 <%@ page import="jakarta.servlet.http.HttpServletRequest" %>
 <%@ page import="jakarta.servlet.http.HttpServletResponse" %>
@@ -46,6 +47,12 @@
             break;
         case "listAll":
             handleListAllUsuarios(request, response, usuarioService);
+            break;
+        case "recuperar":
+            request.getRequestDispatcher("/Views/Forms/Usuarios/recuperar.jsp").forward(request, response);
+            break;
+        case "enviarRecuperacion":
+            handleRecuperarClave(request, response, usuarioService);
             break;
         case "logout":
             handleLogout(request, response, session);
@@ -195,6 +202,25 @@
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "Error de base de datos al listar usuarios.");
             request.getRequestDispatcher("/Views/Forms/Usuarios/listar.jsp").forward(request, response);
+        }
+    }
+
+    private void handleRecuperarClave(HttpServletRequest request, HttpServletResponse response, UsuarioService usuarioService)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+        try {
+            usuarioService.recuperarClave(email);
+            request.setAttribute("successMessage", "Se ha enviado una clave temporal a tu correo.");
+            request.getRequestDispatcher("/Views/Forms/Usuarios/recuperar.jsp").forward(request, response);
+        } catch (UsuarioNotFoundException e) {
+            request.setAttribute("errorMessage", e.getMessage());
+            request.getRequestDispatcher("/Views/Forms/Usuarios/recuperar.jsp").forward(request, response);
+        } catch (SQLException e) {
+            request.setAttribute("errorMessage", "Error de base de datos.");
+            request.getRequestDispatcher("/Views/Forms/Usuarios/recuperar.jsp").forward(request, response);
+        } catch (MessagingException e) {
+            request.setAttribute("errorMessage", "Error al enviar el correo: " + e.getMessage());
+            request.getRequestDispatcher("/Views/Forms/Usuarios/recuperar.jsp").forward(request, response);
         }
     }
 

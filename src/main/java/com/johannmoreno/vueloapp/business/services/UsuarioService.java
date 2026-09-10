@@ -3,17 +3,22 @@ package com.johannmoreno.vueloapp.business.services;
 import com.johannmoreno.vueloapp.business.exceptions.DuplicateUsuarioException;
 import com.johannmoreno.vueloapp.business.exceptions.UsuarioNotFoundException;
 import com.johannmoreno.vueloapp.domain.model.Usuario;
+import com.johannmoreno.vueloapp.infrastructure.email.EmailService;
 import com.johannmoreno.vueloapp.infrastructure.persistence.UsuarioCRUD;
+import jakarta.mail.MessagingException;
 
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.List;
 
 public class UsuarioService {
 
     private final UsuarioCRUD usuarioCrud;
+    private final EmailService emailService;
 
     public UsuarioService() {
         this.usuarioCrud = new UsuarioCRUD();
+        this.emailService = new EmailService();
     }
 
     // Metodo para obtener todos los usuarios
@@ -64,5 +69,33 @@ public class UsuarioService {
     // Metodo para obtener un usuario por email (usado en recuperacion de clave)
     public Usuario getUsuarioByEmail(String email) throws UsuarioNotFoundException, SQLException {
         return usuarioCrud.getUsuarioByEmail(email);
+    }
+
+    // Metodo para recuperar clave: genera una clave temporal, la guarda y la envia por correo
+    public void recuperarClave(String email) throws UsuarioNotFoundException, SQLException, MessagingException {
+        Usuario usuario = usuarioCrud.getUsuarioByEmail(email);
+
+        String claveTemporal = generarClaveTemporal();
+        usuario.setClave(claveTemporal);
+        usuarioCrud.updateUsuario(usuario);
+
+        String asunto = "Recuperacion de clave - VueloApp";
+        String cuerpo = "Hola " + usuario.getNombre() + ",\n\n"
+                + "Tu nueva clave temporal es: " + claveTemporal + "\n\n"
+                + "Te recomendamos iniciar sesion y cambiarla lo antes posible.\n\n"
+                + "Equipo VueloApp";
+
+        emailService.enviarCorreo(usuario.getEmail(), asunto, cuerpo);
+    }
+
+    // Metodo auxiliar para generar una clave temporal aleatoria de 8 caracteres
+    private String generarClaveTemporal() {
+        String caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            sb.append(caracteres.charAt(random.nextInt(caracteres.length())));
+        }
+        return sb.toString();
     }
 }

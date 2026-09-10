@@ -26,6 +26,8 @@
 </form>
 
 <br>
+<a href="<%= request.getContextPath() %>/Controllers/UsuarioController.jsp?action=recuperar">¿Olvidaste tu clave?</a>
+<br><br>
 <a href="<%= request.getContextPath() %>/index.jsp">Volver a la pagina de inicio</a>
 </body>
 </html>
