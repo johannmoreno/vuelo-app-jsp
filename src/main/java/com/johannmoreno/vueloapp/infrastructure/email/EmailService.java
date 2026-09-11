@@ -1,48 +1,66 @@
 package com.johannmoreno.vueloapp.infrastructure.email;
 
-import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 
-import java.util.Properties;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public class EmailService {
 
-    private static final String GMAIL_USER = System.getenv("GMAIL_USER");
-    private static final String GMAIL_APP_PASSWORD = System.getenv("GMAIL_APP_PASSWORD");
+    private static final String BREVO_API_KEY = System.getenv("BREVO_API_KEY");
+    private static final String REMITENTE_EMAIL = System.getenv("REMITENTE_EMAIL");
+    private static final String REMITENTE_NOMBRE = "VueloApp";
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo) throws MessagingException {
-        if (GMAIL_USER == null || GMAIL_APP_PASSWORD == null) {
+        if (BREVO_API_KEY == null || REMITENTE_EMAIL == null) {
             throw new MessagingException("Las credenciales de correo no estan configuradas. " +
-                    "Verifica las variables de entorno GMAIL_USER y GMAIL_APP_PASSWORD.");
+                    "Verifica las variables de entorno BREVO_API_KEY y REMITENTE_EMAIL.");
         }
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "465");
-        props.put("mail.smtp.connectiontimeout", "10000");
-        props.put("mail.smtp.timeout", "10000");
+        String asuntoEscapado = escaparJson(asunto);
+        String cuerpoEscapado = escaparJson(cuerpo);
 
-        Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(GMAIL_USER, GMAIL_APP_PASSWORD);
+        String json = "{"
+                + "\"sender\":{\"name\":\"" + REMITENTE_NOMBRE + "\",\"email\":\"" + REMITENTE_EMAIL + "\"},"
+                + "\"to\":[{\"email\":\"" + destinatario + "\"}],"
+                + "\"subject\":\"" + asuntoEscapado + "\","
+                + "\"textContent\":\"" + cuerpoEscapado + "\""
+                + "}";
+
+        try {
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.brevo.com/v3/smtp/email"))
+                    .header("accept", "application/json")
+                    .header("api-key", BREVO_API_KEY)
+                    .header("content-type", "application/json")
+                    .timeout(Duration.ofSeconds(10))
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() >= 400) {
+                throw new MessagingException("Error del servicio de correo (Brevo): " +
+                        response.statusCode() + " - " + response.body());
             }
-        });
+        } catch (MessagingException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new MessagingException("Error al enviar el correo via Brevo: " + e.getMessage());
+        }
+    }
 
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(GMAIL_USER));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
-        message.setSubject(asunto);
-        message.setText(cuerpo);
-
-        Transport.send(message);
+    private String escaparJson(String texto) {
+        return texto.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "");
     }
 }
