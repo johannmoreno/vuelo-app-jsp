@@ -46,7 +46,7 @@ public class UsuarioCRUD {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            if (e.getErrorCode() == 1062) { // codigo de clave duplicada en MySQL
+            if (e.getErrorCode() == 1062) {
                 throw new DuplicateUsuarioException("El usuario con el id o email ya existe.");
             } else {
                 throw e;
@@ -113,7 +113,7 @@ public class UsuarioCRUD {
         return usuario;
     }
 
-    // Metodo para obtener un usuario por email (usado en login y recuperacion de clave)
+    // Metodo para obtener un usuario por email
     public Usuario getUsuarioByEmail(String email) throws SQLException, UsuarioNotFoundException {
         String query = "SELECT * FROM usuarios WHERE email=?";
         Usuario usuario = null;
@@ -138,7 +138,7 @@ public class UsuarioCRUD {
         return usuario;
     }
 
-    // Metodo para buscar usuarios por nombre o email (para reportes/busquedas)
+    // Metodo para buscar usuarios por nombre o email
     public List<Usuario> searchUsuarios(String searchTerm) throws SQLException {
         List<Usuario> lista = new ArrayList<>();
         String query = "SELECT * FROM usuarios WHERE nombre LIKE ? OR email LIKE ?";
@@ -147,6 +147,56 @@ public class UsuarioCRUD {
 
             stmt.setString(1, "%" + searchTerm + "%");
             stmt.setString(2, "%" + searchTerm + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(new Usuario(
+                            rs.getString("id"),
+                            rs.getString("clave"),
+                            rs.getString("nombre"),
+                            rs.getString("rol"),
+                            rs.getString("email")
+                    ));
+                }
+            }
+        }
+        return lista;
+    }
+
+    // ===== REPORTES PARAMETRIZADOS =====
+
+    // Reporte 1: usuarios filtrados por rol
+    public List<Usuario> reportePorRol(String rol) throws SQLException {
+        List<Usuario> lista = new ArrayList<>();
+        String query = "SELECT * FROM usuarios WHERE rol = ?";
+        try (Connection con = ConnectionDbMySql.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setString(1, rol);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(new Usuario(
+                            rs.getString("id"),
+                            rs.getString("clave"),
+                            rs.getString("nombre"),
+                            rs.getString("rol"),
+                            rs.getString("email")
+                    ));
+                }
+            }
+        }
+        return lista;
+    }
+
+    // Reporte 2: usuarios filtrados por dominio de correo (ej: gmail.com)
+    public List<Usuario> reportePorDominioEmail(String dominio) throws SQLException {
+        List<Usuario> lista = new ArrayList<>();
+        String query = "SELECT * FROM usuarios WHERE email LIKE ?";
+        try (Connection con = ConnectionDbMySql.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setString(1, "%@" + dominio);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

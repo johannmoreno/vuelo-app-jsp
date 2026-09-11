@@ -54,6 +54,15 @@
         case "enviarRecuperacion":
             handleRecuperarClave(request, response, usuarioService);
             break;
+        case "showReportForm":
+            request.getRequestDispatcher("/Views/Forms/Usuarios/reportes.jsp").forward(request, response);
+            break;
+        case "report1":
+            handleReporte1(request, response, usuarioService);
+            break;
+        case "report2":
+            handleReporte2(request, response, usuarioService);
+            break;
         case "logout":
             handleLogout(request, response, session);
             break;
@@ -221,6 +230,34 @@
         } catch (MessagingException e) {
             request.setAttribute("errorMessage", "Error al enviar el correo: " + e.getMessage());
             request.getRequestDispatcher("/Views/Forms/Usuarios/recuperar.jsp").forward(request, response);
+        }
+    }
+
+    private void handleReporte1(HttpServletRequest request, HttpServletResponse response, UsuarioService usuarioService)
+            throws ServletException, IOException {
+        try {
+            String rol = request.getParameter("rol");
+            List<Usuario> resultado = usuarioService.reportePorRol(rol);
+            request.setAttribute("usuariosReporte", resultado);
+            request.setAttribute("reporteTitulo", "Usuarios con rol: " + rol);
+            request.getRequestDispatcher("/Views/Forms/Usuarios/reportes.jsp").forward(request, response);
+        } catch (SQLException e) {
+            request.setAttribute("errorMessage", "Error al generar el reporte: " + e.getMessage());
+            request.getRequestDispatcher("/Views/Forms/Usuarios/reportes.jsp").forward(request, response);
+        }
+    }
+
+    private void handleReporte2(HttpServletRequest request, HttpServletResponse response, UsuarioService usuarioService)
+            throws ServletException, IOException {
+        try {
+            String dominio = request.getParameter("dominio");
+            List<Usuario> resultado = usuarioService.reportePorDominioEmail(dominio);
+            request.setAttribute("usuariosReporte", resultado);
+            request.setAttribute("reporteTitulo", "Usuarios con correo del dominio: " + dominio);
+            request.getRequestDispatcher("/Views/Forms/Usuarios/reportes.jsp").forward(request, response);
+        } catch (SQLException e) {
+            request.setAttribute("errorMessage", "Error al generar el reporte: " + e.getMessage());
+            request.getRequestDispatcher("/Views/Forms/Usuarios/reportes.jsp").forward(request, response);
         }
     }
 

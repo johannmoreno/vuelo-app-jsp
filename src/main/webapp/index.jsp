@@ -29,6 +29,7 @@
     <li><a href="<%= request.getContextPath() %>/Controllers/VueloController.jsp?action=showCreateForm">Agregar Vuelo</a></li>
     <li><a href="<%= request.getContextPath() %>/Controllers/VueloController.jsp?action=showFindForm">Buscar Vuelo</a></li>
     <li><a href="<%= request.getContextPath() %>/Controllers/VueloController.jsp?action=listAll">Listar Vuelos</a></li>
+    <li><a href="<%= request.getContextPath() %>/Controllers/UsuarioController.jsp?action=showReportForm">Reportes de Usuarios</a></li>
     <li><a href="<%= request.getContextPath() %>/Controllers/VueloController.jsp?action=showReportForm">Reportes de Vuelos</a></li>
 </ul>
 <br>

@@ -21,36 +21,30 @@ public class UsuarioService {
         this.emailService = new EmailService();
     }
 
-    // Metodo para obtener todos los usuarios
     public List<Usuario> getAllUsuarios() throws SQLException {
         return usuarioCrud.getAllUsuarios();
     }
 
-    // Metodo para crear un nuevo usuario
     public void createUsuario(String id, String clave, String nombre, String rol, String email)
             throws DuplicateUsuarioException, SQLException {
         Usuario usuario = new Usuario(id, clave, nombre, rol, email);
         usuarioCrud.addUsuario(usuario);
     }
 
-    // Metodo para actualizar un usuario
     public void updateUsuario(String id, String clave, String nombre, String rol, String email)
             throws UsuarioNotFoundException, SQLException {
         Usuario usuario = new Usuario(id, clave, nombre, rol, email);
         usuarioCrud.updateUsuario(usuario);
     }
 
-    // Metodo para eliminar un usuario
     public void deleteUsuario(String id) throws UsuarioNotFoundException, SQLException {
         usuarioCrud.deleteUsuario(id);
     }
 
-    // Metodo para obtener un usuario por id
     public Usuario getUsuarioById(String id) throws UsuarioNotFoundException, SQLException {
         return usuarioCrud.getUsuarioById(id);
     }
 
-    // Metodo para autenticar un usuario (login)
     public Usuario loginUsuario(String email, String clave) throws UsuarioNotFoundException, SQLException {
         Usuario usuario = usuarioCrud.getUsuarioByEmail(email);
 
@@ -61,17 +55,14 @@ public class UsuarioService {
         }
     }
 
-    // Metodo para buscar usuarios por nombre o email
     public List<Usuario> searchUsuarios(String searchTerm) throws SQLException {
         return usuarioCrud.searchUsuarios(searchTerm);
     }
 
-    // Metodo para obtener un usuario por email (usado en recuperacion de clave)
     public Usuario getUsuarioByEmail(String email) throws UsuarioNotFoundException, SQLException {
         return usuarioCrud.getUsuarioByEmail(email);
     }
 
-    // Metodo para recuperar clave: genera una clave temporal, la guarda y la envia por correo
     public void recuperarClave(String email) throws UsuarioNotFoundException, SQLException, MessagingException {
         Usuario usuario = usuarioCrud.getUsuarioByEmail(email);
 
@@ -88,7 +79,6 @@ public class UsuarioService {
         emailService.enviarCorreo(usuario.getEmail(), asunto, cuerpo);
     }
 
-    // Metodo auxiliar para generar una clave temporal aleatoria de 8 caracteres
     private String generarClaveTemporal() {
         String caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
         SecureRandom random = new SecureRandom();
@@ -97,5 +87,15 @@ public class UsuarioService {
             sb.append(caracteres.charAt(random.nextInt(caracteres.length())));
         }
         return sb.toString();
+    }
+
+    // Reporte 1: usuarios por rol
+    public List<Usuario> reportePorRol(String rol) throws SQLException {
+        return usuarioCrud.reportePorRol(rol);
+    }
+
+    // Reporte 2: usuarios por dominio de correo
+    public List<Usuario> reportePorDominioEmail(String dominio) throws SQLException {
+        return usuarioCrud.reportePorDominioEmail(dominio);
     }
 }
